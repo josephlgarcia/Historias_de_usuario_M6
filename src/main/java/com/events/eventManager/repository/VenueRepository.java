@@ -6,6 +6,6 @@ import com.events.eventManager.entity.VenueEntity;
 
 public interface VenueRepository extends JpaRepository<VenueEntity, Long> {
 
-    boolean existsByNombreIgnoreCase(String name);
+    boolean existsByNameIgnoreCase(String name);
 
 }

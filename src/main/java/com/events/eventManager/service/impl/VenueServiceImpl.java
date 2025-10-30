@@ -26,7 +26,7 @@ public class VenueServiceImpl implements VenueService{
     @Override
     public VenueResponse create(VenueRequest req) {
 
-        if (repo.existsByNombreIgnoreCase(req.getName())) {
+        if (repo.existsByNameIgnoreCase(req.getName())) {
             throw new IllegalArgumentException("the venue already exists");
         }
 

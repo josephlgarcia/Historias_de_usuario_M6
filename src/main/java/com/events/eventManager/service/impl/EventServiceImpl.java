@@ -6,21 +6,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.events.eventManager.entity.EventEntity;
+import com.events.eventManager.entity.VenueEntity;
 import com.events.eventManager.repository.EventRepository;
+import com.events.eventManager.repository.VenueRepository;
 import com.events.eventManager.service.EventService;
+import com.events.eventManager.web.advice.VenueNotFoundException;
 import com.events.eventManager.web.dto.EventRequest;
 import com.events.eventManager.web.dto.EventResponse;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 
 @Service
 public class EventServiceImpl implements EventService{
 
-    private final EventRepository repo;
+    private final EventRepository eventRepo;
+    private final VenueRepository venueRepo;
 
 
-    public EventServiceImpl(EventRepository repo) {
-        this.repo = repo;
+    public EventServiceImpl(EventRepository eventRepo, VenueRepository venueRepo) {
+        this.eventRepo = eventRepo;
+        this.venueRepo = venueRepo;
     }
 
     
@@ -28,18 +35,27 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventResponse create(EventRequest req) {
 
-        if (repo.existsByNombreIgnoreCase(req.getName())) {
+        if (eventRepo.existsByNameIgnoreCase(req.getName())) {
             throw new IllegalArgumentException("the event already exists");
+        }
+
+        VenueEntity venue;
+
+        try {
+            venue = venueRepo.getReferenceById(req.getVenueId());
+            venue.getId();
+        } catch (EntityNotFoundException e) {
+            throw new VenueNotFoundException("Venue with ID " + req.getVenueId() + " not found.");
         }
 
         EventEntity event = new EventEntity();
         event.setName(req.getName());
         event.setDate(req.getDate());
-        event.setVenueId(req.getVenueId());
+        event.setVenue(venue);
 
-        var saved = repo.save(event);
+        var saved = eventRepo.save(event);
 
-        return new EventResponse(saved.getId(),saved.getName(), saved.getDate(), saved.getVenueId());
+        return new EventResponse(saved.getId(),saved.getName(), saved.getDate(), saved.getVenue().getId());
     }
 
 
@@ -47,33 +63,43 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventResponse update(Long id, EventRequest req) {
 
-        var event = repo.findById(id)
+        var event = eventRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    
+                
+        VenueEntity venue;
+
+        try {
+            venue = venueRepo.getReferenceById(req.getVenueId());
+            venue.getId();
+        } catch (EntityNotFoundException e) {
+            throw new VenueNotFoundException("Venue with ID " + req.getVenueId() + " not found.");
+        }
 
         event.setName(req.getName());
         event.setDate(req.getDate());
-        event.setVenueId(req.getVenueId());
+        event.setVenue(venue);
 
-        var updated = repo.save(event);
+        var updated = eventRepo.save(event);
 
-        return new EventResponse(updated.getId(), updated.getName(), updated.getDate(), updated.getVenueId());
+        return new EventResponse(updated.getId(), updated.getName(), updated.getDate(), updated.getVenue().getId());
     }
 
 
     @Transactional(readOnly = true)
     @Override
     public EventResponse getById(Long id) {
-        var event = repo.findById(id)
+        var event = eventRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-        return new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenueId());
+        return new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId());
     }
 
 
     @Transactional
     @Override
     public List<EventResponse> getAll() {
-        return repo.findAll().stream()
-                .map(event -> new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenueId()))
+        return eventRepo.findAll().stream()
+                .map(event -> new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId()))
                 .toList();
     }
 

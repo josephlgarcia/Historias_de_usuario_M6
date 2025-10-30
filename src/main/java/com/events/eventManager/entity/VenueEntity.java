@@ -1,10 +1,15 @@
 package com.events.eventManager.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,6 +28,27 @@ public class VenueEntity {
 
     @Column(name = "capacity", nullable = false)
     private Integer capacity;
+
+    @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventEntity> events = new ArrayList<>();
+
+    public void addEvent(EventEntity event) {
+        events.add(event);
+        event.setVenue(this);
+    }
+
+    public void removeEvent(EventEntity event) {
+        events.remove(event);
+        event.setVenue(null);
+    }
+
+    public List<EventEntity> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<EventEntity> events) {
+        this.events = events;
+    }
 
     public Long getId() {
         return id;
