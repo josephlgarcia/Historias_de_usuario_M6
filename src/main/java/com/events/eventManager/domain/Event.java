@@ -5,7 +5,14 @@ public class Event {
     private Long id;
     private String name;
     private String date;
+    private Venue venue;
 
+    public Venue getVenue() {
+        return venue;
+    }
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+    }
     public Long getId() {
         return id;
     }

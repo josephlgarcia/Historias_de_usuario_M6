@@ -1,5 +1,9 @@
 package com.events.eventManager.repository;
 
-public interface EventRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.events.eventManager.entity.EventEntity;
+
+public interface EventRepository extends JpaRepository<EventEntity, Long> {
+    boolean existsByNombreIgnoreCase(String name);
 }
