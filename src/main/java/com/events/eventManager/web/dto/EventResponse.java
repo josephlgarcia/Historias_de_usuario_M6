@@ -2,11 +2,25 @@ package com.events.eventManager.web.dto;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Response data for an event")
 public class EventResponse {
     
+    @Schema(description = "Unique event ID", 
+            example = "1")
     private Long id;
+
+    @Schema(description = "Event name", 
+            example = "Rock concert")
     private String name;
+
+    @Schema(description = "Date and time of the event", 
+            example = "2025-12-31T20:00:00")
     private LocalDateTime date;
+
+    @Schema(description = "ID of the venue where the event will take place", 
+            example = "1")
     private Long venueId;
 
     public EventResponse() {
