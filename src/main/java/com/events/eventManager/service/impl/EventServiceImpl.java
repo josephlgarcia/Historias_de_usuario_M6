@@ -1,6 +1,7 @@
 package com.events.eventManager.service.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,8 @@ import com.events.eventManager.entity.VenueEntity;
 import com.events.eventManager.repository.EventRepository;
 import com.events.eventManager.repository.VenueRepository;
 import com.events.eventManager.service.EventService;
-import com.events.eventManager.web.advice.VenueNotFoundException;
 import com.events.eventManager.web.dto.EventRequest;
 import com.events.eventManager.web.dto.EventResponse;
-
-import jakarta.persistence.EntityNotFoundException;
 
 
 
@@ -36,17 +34,13 @@ public class EventServiceImpl implements EventService{
     public EventResponse create(EventRequest req) {
 
         if (eventRepo.existsByNameIgnoreCase(req.getName())) {
-            throw new IllegalArgumentException("the event already exists");
+            throw new IllegalArgumentException("Event with name '" + req.getName() + "' already exists.");
+
         }
 
-        VenueEntity venue;
+        VenueEntity venue = venueRepo.findById(req.getVenueId())
+                        .orElseThrow(() -> new NoSuchElementException("Venue with ID " + req.getVenueId() + " not found."));
 
-        try {
-            venue = venueRepo.getReferenceById(req.getVenueId());
-            venue.getId();
-        } catch (EntityNotFoundException e) {
-            throw new VenueNotFoundException("Venue with ID " + req.getVenueId() + " not found.");
-        }
 
         EventEntity event = new EventEntity();
         event.setName(req.getName());
@@ -64,17 +58,10 @@ public class EventServiceImpl implements EventService{
     public EventResponse update(Long id, EventRequest req) {
 
         var event = eventRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-    
-                
-        VenueEntity venue;
+                .orElseThrow(() -> new NoSuchElementException("Event with ID " + id + " not found."));
 
-        try {
-            venue = venueRepo.getReferenceById(req.getVenueId());
-            venue.getId();
-        } catch (EntityNotFoundException e) {
-            throw new VenueNotFoundException("Venue with ID " + req.getVenueId() + " not found.");
-        }
+        VenueEntity venue = venueRepo.findById(req.getVenueId())
+                .orElseThrow(() -> new NoSuchElementException("Venue with ID " + req.getVenueId() + " not found."));
 
         event.setName(req.getName());
         event.setDate(req.getDate());
@@ -90,17 +77,27 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventResponse getById(Long id) {
         var event = eventRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new NoSuchElementException("Event with ID " + id + " not found."));
         return new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId());
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<EventResponse> getAll() {
         return eventRepo.findAll().stream()
                 .map(event -> new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId()))
                 .toList();
+    }
+
+    
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        if (!eventRepo.existsById(id)) {
+            throw new NoSuchElementException("Event with ID " + id + " not found.");
+        }
+        eventRepo.deleteById(id);
     }
 
 }

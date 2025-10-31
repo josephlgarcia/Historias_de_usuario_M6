@@ -1,6 +1,7 @@
 package com.events.eventManager.service.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class VenueServiceImpl implements VenueService{
     public VenueResponse create(VenueRequest req) {
 
         if (repo.existsByNameIgnoreCase(req.getName())) {
-            throw new IllegalArgumentException("the venue already exists");
+            throw new IllegalArgumentException("Venue with name '" + req.getName() + "' already exists.");
         }
 
         VenueEntity venue = new VenueEntity();
@@ -45,7 +46,7 @@ public class VenueServiceImpl implements VenueService{
     public VenueResponse update(Long id, VenueRequest req) {
 
         var venue = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found"));
+                .orElseThrow(() -> new NoSuchElementException("Venue with ID " + id + " not found."));
 
         venue.setName(req.getName());
         venue.setAddress(req.getAddress());
@@ -60,16 +61,25 @@ public class VenueServiceImpl implements VenueService{
     @Override
     public VenueResponse getById(Long id) {
         var venue = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found"));
+                .orElseThrow(() -> new NoSuchElementException("Venue with ID " + id + " not found."));
         return new VenueResponse(venue.getId(), venue.getName(), venue.getAddress(), venue.getCapacity());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<VenueResponse> getAll() {
         return repo.findAll().stream()
                 .map(venue -> new VenueResponse(venue.getId(), venue.getName(), venue.getAddress(), venue.getCapacity()))
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new NoSuchElementException("Venue with ID " + id + " not found.");
+        }
+        repo.deleteById(id);
     }
 
 }

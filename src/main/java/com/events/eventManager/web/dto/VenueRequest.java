@@ -1,6 +1,7 @@
 package com.events.eventManager.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class VenueRequest {
 
@@ -10,7 +11,7 @@ public class VenueRequest {
     @NotBlank(message = "Venue address is required")
     private String address;
 
-    @NotBlank(message = "Venue capacity is required")
+    @NotNull(message = "Venue capacity is required")
     private Integer capacity;
     
 

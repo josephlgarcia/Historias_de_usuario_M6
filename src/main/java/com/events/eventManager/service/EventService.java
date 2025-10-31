@@ -11,5 +11,6 @@ public interface EventService {
     EventResponse update(Long id, EventRequest req);
     EventResponse getById(Long id);
     List<EventResponse> getAll();
+    void delete(Long id);
 
 }

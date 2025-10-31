@@ -11,5 +11,6 @@ public interface VenueService {
     VenueResponse update(Long id, VenueRequest req);
     VenueResponse getById(Long id);
     List<VenueResponse> getAll();
+    void delete(Long id);
 
 }

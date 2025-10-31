@@ -9,6 +9,9 @@ public class EventResponse {
     private LocalDateTime date;
     private Long venueId;
 
+    public EventResponse() {
+    }
+
     public EventResponse(Long id, String name, LocalDateTime date, Long venueId) {
         this.id = id;
         this.name = name;
