@@ -13,6 +13,7 @@ import com.events.eventManager.repository.VenueRepository;
 import com.events.eventManager.service.EventService;
 import com.events.eventManager.web.dto.EventRequest;
 import com.events.eventManager.web.dto.EventResponse;
+import com.events.eventManager.web.dto.VenueResponse;
 
 
 
@@ -41,7 +42,6 @@ public class EventServiceImpl implements EventService{
         VenueEntity venue = venueRepo.findById(req.getVenueId())
                         .orElseThrow(() -> new NoSuchElementException("Venue with ID " + req.getVenueId() + " not found."));
 
-
         EventEntity event = new EventEntity();
         event.setName(req.getName());
         event.setDate(req.getDate());
@@ -49,7 +49,9 @@ public class EventServiceImpl implements EventService{
 
         var saved = eventRepo.save(event);
 
-        return new EventResponse(saved.getId(),saved.getName(), saved.getDate(), saved.getVenue().getId());
+        VenueResponse venueResponse = new VenueResponse(venue.getId(), venue.getName(), venue.getAddress(), venue.getCapacity());
+
+        return new EventResponse(saved.getId(),saved.getName(), saved.getDate(), venueResponse);
     }
 
 
@@ -69,7 +71,9 @@ public class EventServiceImpl implements EventService{
 
         var updated = eventRepo.save(event);
 
-        return new EventResponse(updated.getId(), updated.getName(), updated.getDate(), updated.getVenue().getId());
+        VenueResponse venueResponse = new VenueResponse(venue.getId(), venue.getName(), venue.getAddress(), venue.getCapacity());
+
+        return new EventResponse(updated.getId(), updated.getName(), updated.getDate(), venueResponse);
     }
 
 
@@ -78,16 +82,31 @@ public class EventServiceImpl implements EventService{
     public EventResponse getById(Long id) {
         var event = eventRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event with ID " + id + " not found."));
-        return new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId());
+
+        VenueEntity venue = event.getVenue();
+
+        VenueResponse venueResponse = new VenueResponse(venue.getId(), venue.getName(), venue.getAddress(), venue.getCapacity());
+
+        return new EventResponse(event.getId(), event.getName(), event.getDate(), venueResponse);
     }
 
 
     @Transactional(readOnly = true)
     @Override
     public List<EventResponse> getAll() {
+
         return eventRepo.findAll().stream()
-                .map(event -> new EventResponse(event.getId(), event.getName(), event.getDate(), event.getVenue().getId()))
-                .toList();
+            .map(event -> {
+                VenueEntity venue = event.getVenue();
+                VenueResponse venueResponse = new VenueResponse(
+                        venue.getId(),
+                        venue.getName(),
+                        venue.getAddress(),
+                        venue.getCapacity()
+                );
+                return new EventResponse(event.getId(), event.getName(), event.getDate(), venueResponse);
+            })
+            .toList();
     }
 
     

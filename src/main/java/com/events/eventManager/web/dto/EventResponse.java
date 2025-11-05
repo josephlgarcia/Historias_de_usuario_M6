@@ -19,18 +19,18 @@ public class EventResponse {
             example = "2025-12-31T20:00:00")
     private LocalDateTime date;
 
-    @Schema(description = "ID of the venue where the event will take place", 
-            example = "1")
-    private Long venueId;
+    @Schema(description = "Venue details for the event", 
+            example = "{ 'id': 1, 'name': 'Grand Hall', 'address': '123 Main St' }")
+    private VenueResponse venue;
 
     public EventResponse() {
     }
 
-    public EventResponse(Long id, String name, LocalDateTime date, Long venueId) {
+    public EventResponse(Long id, String name, LocalDateTime date, VenueResponse venue) {
         this.id = id;
         this.name = name;
         this.date = date;
-        this.venueId = venueId;
+        this.venue = venue;
     }
 
     public Long getId() {
@@ -57,11 +57,11 @@ public class EventResponse {
         this.date = date;
     }
 
-    public Long getVenueId() {
-        return venueId;
+    public VenueResponse getVenue() {
+        return venue;
     }
 
-    public void setVenueId(Long venueId) {
-        this.venueId = venueId;
+    public void setVenue(VenueResponse venue) {
+        this.venue = venue;
     }
 }
