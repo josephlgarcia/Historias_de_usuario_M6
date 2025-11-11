@@ -1,6 +1,7 @@
 package com.events.eventManager.web.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,6 +24,7 @@ public class VenueRequest {
     @Schema(description = "Seating capacity of the venue", 
             example = "20000", 
             requiredMode = Schema.RequiredMode.REQUIRED)
+    @Min(value = 1, message = "Venue capacity must be at least 1")
     @NotNull(message = "Venue capacity is required")
     private Integer capacity;
     

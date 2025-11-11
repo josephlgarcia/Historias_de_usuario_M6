@@ -3,6 +3,7 @@ package com.events.eventManager.web.dto;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,6 +19,7 @@ public class EventRequest {
     @Schema(description = "Date and time of the event",
             example = "2025-12-31T20:00:00",
             requiredMode = Schema.RequiredMode.REQUIRED)
+    @Future(message = "Event date must be in the future")
     @NotNull(message = "Event date is required")
     private LocalDateTime date;
 
