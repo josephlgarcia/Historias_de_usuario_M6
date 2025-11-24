@@ -8,8 +8,7 @@ import com.events.eventManager.domain.model.Event;
 
 public interface EventRepositoryPort {
     Event save(Event event);
-    Optional<Event> findById(Long Id);
+    Optional<Event> findById(Long id);
     List<Event> findAll();
-    Optional<Event> update(Event event);
-    boolean deleteById(Long Id);
+    void deleteById(Long id);
 }
