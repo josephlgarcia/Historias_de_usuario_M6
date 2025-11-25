@@ -12,9 +12,7 @@ import com.events.eventManager.infrastructure.entities.VenueEntity;
 import com.events.eventManager.infrastructure.mappers.VenueMapper;
 import com.events.eventManager.infrastructure.repositories.JpaVenueRepository;
 
-
 @Component
-@Transactional
 public class VenueRepositoryAdapter implements VenueRepositoryPort {
 
     private final JpaVenueRepository jpaRepository;
@@ -27,22 +25,9 @@ public class VenueRepositoryAdapter implements VenueRepositoryPort {
 
     @Override
     public Venue save(Venue venue) {
-        VenueEntity entity;
-        
-        if (venue.getId() == null) {
-            entity = venueMapper.domainToEntity(venue);
-        } else {
-            entity = jpaRepository.findById(venue.getId())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot update non-existent venue with id: " + venue.getId()));
-            
-            entity.setName(venue.getName());
-            entity.setAddress(venue.getAddress());
-            entity.setCapacity(venue.getCapacity());
-        }
-        
-        VenueEntity savedEntity = jpaRepository.save(entity);
-        return venueMapper.entityToDomain(savedEntity);
+        VenueEntity entity = venueMapper.domainToEntity(venue);
+        VenueEntity saved = jpaRepository.save(entity);
+        return venueMapper.entityToDomain(saved);
     }
 
     @Override
@@ -63,6 +48,11 @@ public class VenueRepositoryAdapter implements VenueRepositoryPort {
     @Override
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByNameIgnoreCase(String name) {
+        return jpaRepository.existsByNameIgnoreCase(name);
     }
 
 }

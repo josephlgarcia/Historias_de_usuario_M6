@@ -11,4 +11,5 @@ public interface EventRepositoryPort {
     Optional<Event> findById(Long id);
     List<Event> findAll();
     void deleteById(Long id);
+    boolean existsByNameIgnoreCase(String name);
 }
