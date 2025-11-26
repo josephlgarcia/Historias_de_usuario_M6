@@ -12,4 +12,5 @@ public interface VenueRepositoryPort {
     List<Venue> findAll();
     void deleteById(Long id);
     boolean existsByNameIgnoreCase(String name);
+    boolean existsById(Long id);
 }

@@ -55,4 +55,9 @@ public class VenueRepositoryAdapter implements VenueRepositoryPort {
         return jpaRepository.existsByNameIgnoreCase(name);
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        return jpaRepository.existsById(id);
+    }
+
 }

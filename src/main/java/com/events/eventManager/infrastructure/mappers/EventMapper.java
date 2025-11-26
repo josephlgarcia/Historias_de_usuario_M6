@@ -24,6 +24,6 @@ public interface EventMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "venue", ignore = true)
-    Event rquestToDomain(EventRequest request);
+    Event requestToDomain(EventRequest request);
     
 }

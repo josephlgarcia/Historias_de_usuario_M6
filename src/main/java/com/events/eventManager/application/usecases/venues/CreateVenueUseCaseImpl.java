@@ -19,7 +19,7 @@ public class CreateVenueUseCaseImpl implements CreateVenueUseCase {
     public Venue createVenue(Venue venue) {
 
         if (repo.existsByNameIgnoreCase(venue.getName())) {
-            throw new IllegalArgumentException("Event with name '" + venue.getName() + "' already exists.");
+            throw new IllegalArgumentException("Venue with name '" + venue.getName() + "' already exists.");
         }
 
         return repo.save(venue);
