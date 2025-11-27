@@ -1,15 +1,17 @@
 package com.events.eventManager.domain.model;
 
+import java.time.LocalDateTime;
+
 public class Event {
     private Long id;
     private String name;
-    private String date;
+    private LocalDateTime date;
     private Venue venue;
 
     public Event() {
     }
 
-    public Event(Long id, String name, String date, Venue venue) {
+    public Event(Long id, String name, LocalDateTime date, Venue venue) {
         this.id = id;
         this.name = name;
         this.date = date;
@@ -40,11 +42,11 @@ public class Event {
         this.name = name;
     }
 
-    public String getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 }

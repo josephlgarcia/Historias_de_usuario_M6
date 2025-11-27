@@ -1,11 +1,14 @@
 package com.events.eventManager.application.usecases.venues;
 
+import org.springframework.stereotype.Service;
+
 import com.events.eventManager.domain.model.Venue;
 import com.events.eventManager.domain.ports.in.venue.CreateVenueUseCase;
 import com.events.eventManager.domain.ports.out.VenueRepositoryPort;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class CreateVenueUseCaseImpl implements CreateVenueUseCase {
 
     private final VenueRepositoryPort repo;

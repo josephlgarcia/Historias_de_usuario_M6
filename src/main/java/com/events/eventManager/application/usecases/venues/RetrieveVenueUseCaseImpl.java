@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.events.eventManager.domain.model.Venue;
 import com.events.eventManager.domain.ports.in.venue.RetrieveVenueUseCase;
 import com.events.eventManager.domain.ports.out.VenueRepositoryPort;
 
+@Service
 public class RetrieveVenueUseCaseImpl implements RetrieveVenueUseCase {
 
     private final VenueRepositoryPort repo;

@@ -23,7 +23,7 @@ public interface EventMapper {
     EventResponse domainToResponse(Event domain);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "venue", ignore = true)
+    @Mapping(target = "venue", expression = "java(new Venue(request.venueId(), null, null, null))")
     Event requestToDomain(EventRequest request);
-    
+
 }

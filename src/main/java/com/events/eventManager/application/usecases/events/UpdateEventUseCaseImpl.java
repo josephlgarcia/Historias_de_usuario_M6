@@ -25,10 +25,14 @@ public class UpdateEventUseCaseImpl implements UpdateEventUseCase {
     @Transactional
     @Override
     public Event updateEvent(Long id, Event event) {
+        Event existing = eventRepo.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Event with ID " + id + " not found."));
         
-        if (eventRepo.existsByNameIgnoreCase(event.getName())) {
+        if (!existing.getName().equalsIgnoreCase(event.getName()) &&
+            eventRepo.existsByNameIgnoreCase(event.getName())) {
             throw new IllegalArgumentException("Event with name '" + event.getName() + "' already exists.");
         }
+        event.setId(id);
 
         Venue venue = venueRepo.findById(event.getVenue().getId())
                             .orElseThrow(() -> new NoSuchElementException("Venue with ID " + event.getVenue().getId() + " not found."));

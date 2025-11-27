@@ -1,10 +1,13 @@
 package com.events.eventManager.infrastructure.web.controller;
 
-import org.apache.el.stream.Optional;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,8 +58,8 @@ public class EventController {
     })
     @PostMapping
     public ResponseEntity<EventResponse> create(@Valid @RequestBody EventRequest req) {
-        var event = mapper.requestToDomain(req);
-        var saved = createService.createEvent(event);
+        Event event = mapper.requestToDomain(req);
+        Event saved = createService.createEvent(event);
         EventResponse response = mapper.domainToResponse(saved);
         return ResponseEntity.ok(response);
     }
@@ -72,5 +75,42 @@ public class EventController {
         var event = retrieveService.getEventById(id);
         EventResponse response = mapper.domainToResponse(event.get());
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Update event", description = "Updates the information of an existing event")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Event updated successfully",
+            content = @Content(schema = @Schema(implementation = EventResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Event not found", content = @Content),
+        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponse> update(@PathVariable Long id, @Valid @RequestBody EventRequest req) {
+        Event event = mapper.requestToDomain(req);
+        Event updated = updateService.updateEvent(id, event);
+        EventResponse response = mapper.domainToResponse(updated);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "List all events", description = "Returns a list of all events")
+    @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
+    @GetMapping()
+    public ResponseEntity<List<EventResponse>> getAll() {
+        List<Event> events = retrieveService.getAllEvents();
+        List<EventResponse> responses = events.stream()
+                .map(mapper::domainToResponse)
+                .toList();
+        return ResponseEntity.ok(responses);
+    }
+
+    @Operation(summary = "Delete event", description = "Deletes an event by its identifier")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Event deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        deleteService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
     }
 }
