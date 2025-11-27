@@ -1,6 +1,7 @@
 package com.events.eventManager.infrastructure.web.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,7 +74,7 @@ public class VenueController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<VenueResponse> getById(@PathVariable Long id) {
-        var venue = retrieveService.getVenueById(id);
+        Optional<Venue> venue = retrieveService.getVenueById(id);
         VenueResponse response = mapper.domainToResponse(venue.get());
         return ResponseEntity.ok(response);
     }

@@ -1,6 +1,7 @@
 package com.events.eventManager.infrastructure.web.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +29,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.experimental.var;
 
 @Tag(name = "Events", description = "API for event management")
 @RestController
@@ -72,7 +72,7 @@ public class EventController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getById(@PathVariable Long id) {
-        var event = retrieveService.getEventById(id);
+        Optional<Event> event = retrieveService.getEventById(id);
         EventResponse response = mapper.domainToResponse(event.get());
         return ResponseEntity.ok(response);
     }

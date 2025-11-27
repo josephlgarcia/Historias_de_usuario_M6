@@ -19,11 +19,11 @@ public interface VenueMapper {
     Venue entityToDomain(VenueEntity entity);
 
     @Mapping(target = "events", ignore = true)
-    VenueEntity domainToEntity(Venue domain);
+    VenueEntity domainToEntity(Venue venue);
 
-    VenueResponse domainToResponse(Venue domain);
+    VenueResponse domainToResponse(Venue venue);
     
     @Mapping(target = "id", ignore = true)
-    Venue requestToDomain(VenueRequest request);
+    Venue requestToDomain(VenueRequest venueRequest);
 
 }

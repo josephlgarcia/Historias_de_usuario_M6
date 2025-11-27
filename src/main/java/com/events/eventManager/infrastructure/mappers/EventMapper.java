@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 import com.events.eventManager.domain.model.Event;
+import com.events.eventManager.domain.model.Venue;
 import com.events.eventManager.infrastructure.entities.EventEntity;
 import com.events.eventManager.infrastructure.web.dto.events.EventRequest;
 import com.events.eventManager.infrastructure.web.dto.events.EventResponse;
@@ -15,15 +16,15 @@ import com.events.eventManager.infrastructure.web.dto.events.EventResponse;
 )
 public interface EventMapper {
 
-    Event entityToDomain(EventEntity entity);
+    Event entityToDomain(EventEntity event);
 
     @Mapping(target = "venue", source = "venue")
-    EventEntity domainToEntity(Event domain);
+    EventEntity domainToEntity(Event event);
 
-    EventResponse domainToResponse(Event domain);
+    EventResponse domainToResponse(Event event);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "venue", expression = "java(new Venue(request.venueId(), null, null, null))")
-    Event requestToDomain(EventRequest request);
+    @Mapping(target = "venue.id", source = "venueId")
+    Event requestToDomain(EventRequest eventRequest);
 
 }
