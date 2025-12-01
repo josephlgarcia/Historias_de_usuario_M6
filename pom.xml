@@ -104,6 +104,22 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- ========================================================= -->
+        <!--                    FLYWAY DB                             -->
+        <!-- ========================================================= -->
+        <!-- Flyway dependencies -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!-- Para soporte específico de PostgreSQL -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
