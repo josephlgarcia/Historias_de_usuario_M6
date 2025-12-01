@@ -57,4 +57,11 @@ public class EventRepositoryAdapter implements EventRepositoryPort{
         return jpaRepository.existsById(id);
     }
 
+    @Override
+    public List<Event> findByVenue_CapacityGreaterThanEqual(Integer capacity) {
+        return jpaRepository.findByVenue_CapacityGreaterThanEqual(capacity).stream()
+                .map(eventMapper::entityToDomain)
+                .toList();
+    }
+
 }

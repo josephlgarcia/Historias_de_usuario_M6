@@ -13,4 +13,5 @@ public interface EventRepositoryPort {
     void deleteById(Long id);
     boolean existsByNameIgnoreCase(String name);
     boolean existsById(Long id);
+    List<Event> findByVenue_CapacityGreaterThanEqual(Integer capacity);
 }

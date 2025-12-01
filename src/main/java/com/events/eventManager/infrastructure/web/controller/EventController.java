@@ -103,6 +103,17 @@ public class EventController {
         return ResponseEntity.ok(responses);
     }
 
+    @Operation(summary = "Get events by venue capacity", description = "Returns a list of events with venue capacity greater than or equal to the specified value")
+    @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
+    @GetMapping("/capacity/{capacity}")
+    public ResponseEntity<List<EventResponse>> getByVenueCapacity(@PathVariable Integer capacity) {
+        List<Event> events = retrieveService.getEventsByVenueCapacityGreaterThanEqual(capacity);
+        List<EventResponse> responses = events.stream()
+                .map(mapper::domainToResponse)
+                .toList();
+        return ResponseEntity.ok(responses);
+    }
+
     @Operation(summary = "Delete event", description = "Deletes an event by its identifier")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Event deleted successfully"),

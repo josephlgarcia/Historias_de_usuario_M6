@@ -1,7 +1,31 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "java.project.sourcePaths": [
-        "src/main/java/com/events/eventManager/service/impl",
-        "src/main/java/com/events/eventManager"
-    ]
+    // Asegurar que VS Code use Java 17
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "/usr/lib/jvm/java-17-openjdk-amd64",
+            "default": true
+        }
+    ],
+    "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-amd64",
+
+    // Permitir procesamiento de anotaciones (MapStruct)
+    "java.configuration.enableAnnotationProcessing": true,
+
+    // FORZAR a VS Code a actualizar el build (esto es clave)
+    "java.configuration.updateBuildConfiguration": "automatic",
+
+    // Desactivar análisis null estricto (a veces rompe MapStruct)
+    "java.compile.nullAnalysis.mode": "disabled",
+
+    // Evitar que VS Code compile por su cuenta (confunde a MapStruct)
+    "java.autobuild.enabled": false,
+
+    // Evitar que VS Code lea target/ (donde se generan los .java de MapStruct)
+    "files.watcherExclude": {
+        "**/target/**": true
+    },
+
+    // Forzar a Maven a usar JAVA_HOME correcto
+    "maven.terminal.useJavaHome": true
 }

@@ -36,4 +36,10 @@ public class RetrieveEventUseCaseImpl implements RetrieveEventUseCase {
         return repo.findAll();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<Event> getEventsByVenueCapacityGreaterThanEqual(Integer capacity) {
+        return repo.findByVenue_CapacityGreaterThanEqual(capacity);
+    }
+
 }

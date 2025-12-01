@@ -8,4 +8,5 @@ import com.events.eventManager.domain.model.Event;
 public interface RetrieveEventUseCase {
     Optional<Event> getEventById(Long id);
     List<Event> getAllEvents();
+    List<Event> getEventsByVenueCapacityGreaterThanEqual(Integer capacity);
 }
