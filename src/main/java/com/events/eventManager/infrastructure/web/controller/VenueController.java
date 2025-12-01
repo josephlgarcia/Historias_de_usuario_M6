@@ -19,6 +19,9 @@ import com.events.eventManager.domain.ports.in.venue.DeleteVenueUseCase;
 import com.events.eventManager.domain.ports.in.venue.RetrieveVenueUseCase;
 import com.events.eventManager.domain.ports.in.venue.UpdateVenueUseCase;
 import com.events.eventManager.infrastructure.mappers.VenueMapper;
+import com.events.eventManager.infrastructure.util.AppResponse;
+import com.events.eventManager.infrastructure.util.AppResponse.Pagination;
+import com.events.eventManager.infrastructure.web.dto.events.EventResponse;
 import com.events.eventManager.infrastructure.web.dto.venues.VenueRequest;
 import com.events.eventManager.infrastructure.web.dto.venues.VenueResponse;
 
@@ -59,12 +62,15 @@ public class VenueController {
         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<VenueResponse> create(@Valid @RequestBody VenueRequest req) {
+    public ResponseEntity<AppResponse<VenueResponse>> create(@Valid @RequestBody VenueRequest req) {
         Venue venue = mapper.requestToDomain(req);
         Venue saved = createService.createVenue(venue);
         VenueResponse response = mapper.domainToResponse(saved);
-        return ResponseEntity.ok(response);
+
+        AppResponse<VenueResponse> appResponse = AppResponse.withMessage(response, "Venue created successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Get venue by ID", description = "Returns a specific venue by its ID")
     @ApiResponses(value = {
@@ -73,11 +79,14 @@ public class VenueController {
         @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<VenueResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<AppResponse<VenueResponse>> getById(@PathVariable Long id) {
         Optional<Venue> venue = retrieveService.getVenueById(id);
         VenueResponse response = mapper.domainToResponse(venue.get());
-        return ResponseEntity.ok(response);
+        
+        AppResponse<VenueResponse> appResponse = AppResponse.withMessage(response, "Venue created successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Update venue", description = "Updates the information of an existing venue")
     @ApiResponses(value = {
@@ -87,23 +96,29 @@ public class VenueController {
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<VenueResponse> update(@PathVariable Long id, @Valid @RequestBody VenueRequest req) {
+    public ResponseEntity<AppResponse<VenueResponse>> update(@PathVariable Long id, @Valid @RequestBody VenueRequest req) {
         Venue venue = mapper.requestToDomain(req);
         Venue updated = updateService.updateVenue(id, venue);
         VenueResponse response = mapper.domainToResponse(updated);
-        return ResponseEntity.ok(response);
+        
+        AppResponse<VenueResponse> appResponse = AppResponse.withMessage(response, "Venue created successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "List all venues", description = "Returns a list of all venues")
     @ApiResponse(responseCode = "200", description = "List of venues retrieved successfully",
         content = @Content(schema = @Schema(implementation = VenueResponse.class)))
     @GetMapping()
-    public ResponseEntity<List<VenueResponse>> getAll() {
+    public ResponseEntity<AppResponse<List<VenueResponse>>> getAll() {
         List<Venue> venues = retrieveService.getAllVenues();
         List<VenueResponse> responses = venues.stream()
                 .map(mapper::domainToResponse)
                 .toList();
-        return ResponseEntity.ok(responses);
+                
+        Pagination page = new Pagination(0, responses.size(), responses.size(), 1);
+        AppResponse<List<VenueResponse>> appResponse = AppResponse.withPagination(responses, page);
+        return ResponseEntity.ok(appResponse);
     }
 
     @Operation(summary = "Delete venue", description = "Deletes a venue by its ID")

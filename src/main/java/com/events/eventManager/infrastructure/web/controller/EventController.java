@@ -19,6 +19,8 @@ import com.events.eventManager.domain.ports.in.event.DeleteEventUseCase;
 import com.events.eventManager.domain.ports.in.event.RetrieveEventUseCase;
 import com.events.eventManager.domain.ports.in.event.UpdateEventUseCase;
 import com.events.eventManager.infrastructure.mappers.EventMapper;
+import com.events.eventManager.infrastructure.util.AppResponse;
+import com.events.eventManager.infrastructure.util.AppResponse.Pagination;
 import com.events.eventManager.infrastructure.web.dto.events.EventRequest;
 import com.events.eventManager.infrastructure.web.dto.events.EventResponse;
 
@@ -49,20 +51,24 @@ public class EventController {
         this.mapper = mapper;
     }
 
+
     @Operation(summary = "Create a new event", description = "Create a new event with the information provided")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Event created successfully",
-            content = @Content(schema = @Schema(implementation = EventResponse.class))),
+        @ApiResponse(responseCode = "201", description = "Event created successfully",
+            content = @Content(schema = @Schema(implementation = AppResponse.class))),
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<EventResponse> create(@Valid @RequestBody EventRequest req) {
+    public ResponseEntity<AppResponse<EventResponse>> create(@Valid @RequestBody EventRequest req) {
         Event event = mapper.requestToDomain(req);
         Event saved = createService.createEvent(event);
         EventResponse response = mapper.domainToResponse(saved);
-        return ResponseEntity.ok(response);
+
+        AppResponse<EventResponse> appResponse = AppResponse.withMessage(response, "Event created successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Get event by ID", description = "Returns a specific event by its identifier")
     @ApiResponses(value = {
@@ -71,11 +77,14 @@ public class EventController {
         @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<AppResponse<EventResponse>> getById(@PathVariable Long id) {
         Optional<Event> event = retrieveService.getEventById(id);
         EventResponse response = mapper.domainToResponse(event.get());
-        return ResponseEntity.ok(response);
+
+        AppResponse<EventResponse> appResponse = AppResponse.withMessage(response, "Event retrieved successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Update event", description = "Updates the information of an existing event")
     @ApiResponses(value = {
@@ -85,34 +94,45 @@ public class EventController {
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> update(@PathVariable Long id, @Valid @RequestBody EventRequest req) {
+    public ResponseEntity<AppResponse<EventResponse>> update(@PathVariable Long id, @Valid @RequestBody EventRequest req) {
         Event event = mapper.requestToDomain(req);
         Event updated = updateService.updateEvent(id, event);
         EventResponse response = mapper.domainToResponse(updated);
-        return ResponseEntity.ok(response);
+
+        AppResponse <EventResponse> appResponse = AppResponse.withMessage(response, "Event updated successfully");
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "List all events", description = "Returns a list of all events")
     @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
     @GetMapping()
-    public ResponseEntity<List<EventResponse>> getAll() {
+    public ResponseEntity<AppResponse<List<EventResponse>>> getAll() {
         List<Event> events = retrieveService.getAllEvents();
         List<EventResponse> responses = events.stream()
                 .map(mapper::domainToResponse)
                 .toList();
-        return ResponseEntity.ok(responses);
+
+        Pagination page = new Pagination(0, responses.size(), responses.size(), 1);
+        AppResponse<List<EventResponse>> appResponse = AppResponse.withPagination(responses, page);
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Get events by venue capacity", description = "Returns a list of events with venue capacity greater than or equal to the specified value")
     @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
     @GetMapping("/capacity/{capacity}")
-    public ResponseEntity<List<EventResponse>> getByVenueCapacity(@PathVariable Integer capacity) {
+    public ResponseEntity<AppResponse<List<EventResponse>>> getByVenueCapacity(@PathVariable Integer capacity) {
         List<Event> events = retrieveService.getEventsByVenueCapacityGreaterThanEqual(capacity);
         List<EventResponse> responses = events.stream()
                 .map(mapper::domainToResponse)
                 .toList();
-        return ResponseEntity.ok(responses);
+                
+        Pagination page = new Pagination(0, responses.size(), responses.size(), 1);
+        AppResponse<List<EventResponse>> appResponse = AppResponse.withPagination(responses, page);
+        return ResponseEntity.ok(appResponse);
     }
+
 
     @Operation(summary = "Delete event", description = "Deletes an event by its identifier")
     @ApiResponses(value = {
