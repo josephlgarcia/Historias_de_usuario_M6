@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.events.eventManager.infrastructure.util.Trace;
+import com.events.eventManager.infrastructure.util.exception.ForbiddenException;
+import com.events.eventManager.infrastructure.util.exception.JwtException;
+import com.events.eventManager.infrastructure.util.exception.ResourceNotFoundException;
+import com.events.eventManager.infrastructure.util.exception.UnauthorizedException;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -21,6 +26,82 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> unauthorized(
+            UnauthorizedException ex, 
+            HttpServletRequest req) {
+        
+        String traceId = Trace.currentId();
+        logger.warn("Unauthorized access on {} - TraceId: {} - {}", req.getRequestURI(), traceId, ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                    "timestamp", Instant.now().toString(), 
+                    "status", 401,
+                    "error", "Unauthorized", 
+                    "message", ex.getMessage(), 
+                    "path", req.getRequestURI(),
+                    "traceId", traceId
+                ));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> forbidden(
+            ForbiddenException ex, 
+            HttpServletRequest req) {
+        
+        String traceId = Trace.currentId();
+        logger.warn("Forbidden access on {} - TraceId: {} - {}", req.getRequestURI(), traceId, ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of(
+                    "timestamp", Instant.now().toString(), 
+                    "status", 403,
+                    "error", "Forbidden", 
+                    "message", ex.getMessage(), 
+                    "path", req.getRequestURI(),
+                    "traceId", traceId
+                ));
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Map<String, Object>> jwtException(
+            JwtException ex, 
+            HttpServletRequest req) {
+        
+        String traceId = Trace.currentId();
+        logger.warn("JWT error on {} - TraceId: {} - {}", req.getRequestURI(), traceId, ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                    "timestamp", Instant.now().toString(), 
+                    "status", 401,
+                    "error", "Unauthorized", 
+                    "message", "Token JWT inválido o expirado", 
+                    "path", req.getRequestURI(),
+                    "traceId", traceId
+                ));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> resourceNotFound(
+            ResourceNotFoundException ex, 
+            HttpServletRequest req) {
+        
+        String traceId = Trace.currentId();
+        logger.warn("Resource not found on {} - TraceId: {} - {}", req.getRequestURI(), traceId, ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                    "timestamp", Instant.now().toString(), 
+                    "status", 404,
+                    "error", "Not Found", 
+                    "message", ex.getMessage(), 
+                    "path", req.getRequestURI(),
+                    "traceId", traceId
+                ));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> badRequest(

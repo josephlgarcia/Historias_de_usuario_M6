@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,7 @@ public class EventController {
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AppResponse<EventResponse>> create(@Valid @RequestBody EventRequest req) {
         Event event = mapper.requestToDomain(req);
@@ -76,6 +78,7 @@ public class EventController {
             content = @Content(schema = @Schema(implementation = EventResponse.class))),
         @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
     })
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<AppResponse<EventResponse>> getById(@PathVariable Long id) {
         Optional<Event> event = retrieveService.getEventById(id);
@@ -93,6 +96,7 @@ public class EventController {
         @ApiResponse(responseCode = "404", description = "Event not found", content = @Content),
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<AppResponse<EventResponse>> update(@PathVariable Long id, @Valid @RequestBody EventRequest req) {
         Event event = mapper.requestToDomain(req);
@@ -106,6 +110,7 @@ public class EventController {
 
     @Operation(summary = "List all events", description = "Returns a list of all events")
     @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping()
     public ResponseEntity<AppResponse<List<EventResponse>>> getAll() {
         List<Event> events = retrieveService.getAllEvents();
@@ -121,6 +126,7 @@ public class EventController {
 
     @Operation(summary = "Get events by venue capacity", description = "Returns a list of events with venue capacity greater than or equal to the specified value")
     @ApiResponse(responseCode = "200", description = "List of events retrieved successfully")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/capacity/{capacity}")
     public ResponseEntity<AppResponse<List<EventResponse>>> getByVenueCapacity(@PathVariable Integer capacity) {
         List<Event> events = retrieveService.getEventsByVenueCapacityGreaterThanEqual(capacity);
@@ -139,6 +145,7 @@ public class EventController {
         @ApiResponse(responseCode = "204", description = "Event deleted successfully"),
         @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteService.deleteEvent(id);

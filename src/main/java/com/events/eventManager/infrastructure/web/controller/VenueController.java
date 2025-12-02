@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,6 @@ import com.events.eventManager.domain.ports.in.venue.UpdateVenueUseCase;
 import com.events.eventManager.infrastructure.mappers.VenueMapper;
 import com.events.eventManager.infrastructure.util.AppResponse;
 import com.events.eventManager.infrastructure.util.AppResponse.Pagination;
-import com.events.eventManager.infrastructure.web.dto.events.EventResponse;
 import com.events.eventManager.infrastructure.web.dto.venues.VenueRequest;
 import com.events.eventManager.infrastructure.web.dto.venues.VenueResponse;
 
@@ -61,6 +61,7 @@ public class VenueController {
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AppResponse<VenueResponse>> create(@Valid @RequestBody VenueRequest req) {
         Venue venue = mapper.requestToDomain(req);
@@ -78,6 +79,7 @@ public class VenueController {
             content = @Content(schema = @Schema(implementation = VenueResponse.class))),
         @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content)
     })
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<AppResponse<VenueResponse>> getById(@PathVariable Long id) {
         Optional<Venue> venue = retrieveService.getVenueById(id);
@@ -95,6 +97,7 @@ public class VenueController {
         @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content),
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<AppResponse<VenueResponse>> update(@PathVariable Long id, @Valid @RequestBody VenueRequest req) {
         Venue venue = mapper.requestToDomain(req);
@@ -109,6 +112,7 @@ public class VenueController {
     @Operation(summary = "List all venues", description = "Returns a list of all venues")
     @ApiResponse(responseCode = "200", description = "List of venues retrieved successfully",
         content = @Content(schema = @Schema(implementation = VenueResponse.class)))
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping()
     public ResponseEntity<AppResponse<List<VenueResponse>>> getAll() {
         List<Venue> venues = retrieveService.getAllVenues();
@@ -126,6 +130,7 @@ public class VenueController {
         @ApiResponse(responseCode = "204", description = "Venue deleted successfully"),
         @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteService.deleteVenue(id);

@@ -65,7 +65,7 @@ public class User {
 
     public String getFullName() {
         return (firstName != null ? firstName : "") + " " + 
-               (lastName != null ? lastName : "");
+                (lastName != null ? lastName : "");
     }
 
     public Long getId() {
