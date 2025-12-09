@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.events.eventManager.domain.model.User;
 import com.events.eventManager.domain.ports.in.auth.UserDetailsProvider;
-import com.events.eventManager.domain.ports.out.UserRepository;
+import com.events.eventManager.domain.ports.out.UserRepositoryPort;
 
 /**
  * Implementación del proveedor de detalles del usuario.
@@ -17,9 +17,9 @@ import com.events.eventManager.domain.ports.out.UserRepository;
 @Primary
 public class UserDetailsProviderImpl implements UserDetailsProvider {
     
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     
-    public UserDetailsProviderImpl(UserRepository userRepository) {
+    public UserDetailsProviderImpl(UserRepositoryPort userRepository) {
         this.userRepository = userRepository;
     }
     

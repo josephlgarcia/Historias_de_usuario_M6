@@ -8,7 +8,7 @@ import com.events.eventManager.domain.model.User;
  * Puerto de salida para el repositorio de usuarios.
  * Define el contrato para acceder a la persistencia de usuarios.
  */
-public interface UserRepository {
+public interface UserRepositoryPort {
     
     /**
      * Guarda un usuario en la persistencia.

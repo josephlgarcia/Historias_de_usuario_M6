@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.events.eventManager.domain.model.Role;
 import com.events.eventManager.domain.model.User;
 import com.events.eventManager.domain.ports.in.auth.RegisterUseCase;
-import com.events.eventManager.domain.ports.out.UserRepository;
+import com.events.eventManager.domain.ports.out.UserRepositoryPort;
 
 /**
  * Implementación del caso de uso de registro.
@@ -18,10 +18,10 @@ import com.events.eventManager.domain.ports.out.UserRepository;
 @Service
 public class RegisterUseCaseImpl implements RegisterUseCase {
     
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public RegisterUseCaseImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public RegisterUseCaseImpl(UserRepositoryPort userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

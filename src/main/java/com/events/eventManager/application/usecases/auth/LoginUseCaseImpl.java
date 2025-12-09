@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.events.eventManager.domain.model.User;
 import com.events.eventManager.domain.ports.in.auth.LoginUseCase;
-import com.events.eventManager.domain.ports.out.UserRepository;
+import com.events.eventManager.domain.ports.out.UserRepositoryPort;
 import com.events.eventManager.infrastructure.util.exception.UnauthorizedException;
 
 /**
@@ -15,10 +15,10 @@ import com.events.eventManager.infrastructure.util.exception.UnauthorizedExcepti
 @Service
 public class LoginUseCaseImpl implements LoginUseCase {
     
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public LoginUseCaseImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public LoginUseCaseImpl(UserRepositoryPort userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

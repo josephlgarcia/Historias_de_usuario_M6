@@ -49,7 +49,7 @@ export FLYWAY_BASELINE_ON_MIGRATE="false"
 export FLYWAY_LOCATIONS="classpath:db/migration"
 export FLYWAY_SCHEMAS="public"
 export FLYWAY_VALIDATE_ON_MIGRATE="true"
-export APP_NAME="EventManager"
+export APP_NAME="event_manager"
 export SERVER_PORT="8080"
 ```
 
